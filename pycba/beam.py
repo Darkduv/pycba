@@ -55,18 +55,15 @@ class Beam:
         if L is not None and eletype is not None:
             # scalar EI - same for all spans
             if isinstance(EI, float):
-                for l, et in zip(L, eletype):
-                    self.add_span(l, EI, et)
-            else:
-                if len(L) == len(EI):
-                    for l, ei, et in zip(L, EI, eletype):
-                        self.add_span(l, ei, et)
-                else:
-                    raise ValueError("Define EI for each span")
-            if len(R) == 2 * len(L) + 2:
-                self._restraints = R
-            else:
+                EI = [EI] * len(L)
+            if len(L) != len(EI):
+                raise ValueError("Define EI for each span")
+            if len(R) != 2 * len(L) + 2:
                 raise ValueError("Insufficient restraints defined")
+
+            for l, ei, et in zip(L, EI, eletype):
+                self.add_span(l, ei, et)
+            self._restraints = R
         if LM is not None:
             self.LM = LM
 
